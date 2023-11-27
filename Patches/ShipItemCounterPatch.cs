@@ -18,7 +18,7 @@ namespace ReturnTimeIncrease.Patches
 
         private static float _displayTimeLeft;
 
-        private const float DisplayTime = 5f;
+        private const float DisplayTime = 3f;
         
         [HarmonyPatch("PingScan_performed")]
         [HarmonyPrefix]

@@ -40,6 +40,7 @@ namespace ReturnTimeIncrease
             harmony.PatchAll(typeof(ShipItemCounterPatch));
             harmony.PatchAll(typeof(UserInformationHudPatch));
             harmony.PatchAll(typeof(LeaveEarlyTextPatch));
+            harmony.PatchAll(typeof(BuyingRateChancePatch));
         }
     }
 }

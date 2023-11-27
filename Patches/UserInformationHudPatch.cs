@@ -1,4 +1,6 @@
-﻿using HarmonyLib;
+﻿using System.Diagnostics;
+using HarmonyLib;
+using UnityEngine.InputSystem;
 
 namespace ReturnTimeIncrease.Patches
 {
@@ -8,18 +10,22 @@ namespace ReturnTimeIncrease.Patches
 
         [HarmonyPatch("PingScan_performed")]
         [HarmonyPrefix]
-        private static void CreatePatch(ref HUDManager __instance)
+        private static void CreatePatch(ref HUDManager __instance, InputAction.CallbackContext context)
         {
             if (!GameNetworkManager.Instance.localPlayerController.isInHangarShipRoom)
             { 
-            float health = (float)GameNetworkManager.Instance.localPlayerController.health;
-            float insanityLvl = (float)GameNetworkManager.Instance.localPlayerController.insanityLevel;
-            float maxInsanityLevel = (float)GameNetworkManager.Instance.localPlayerController.maxInsanityLevel;
+                float health = (float)GameNetworkManager.Instance.localPlayerController.health;
+                float insanityLvl = (float)GameNetworkManager.Instance.localPlayerController.insanityLevel * 2;
+                float maxInsanityLevel = (float)GameNetworkManager.Instance.localPlayerController.maxInsanityLevel;
 
-            var DisplayGlobalNotification = AccessTools.Method(typeof(HUDManager), "DisplayGlobalNotification");
-            DisplayGlobalNotification.Invoke(__instance, new object[] { $"Health Points: {health:F0}/100\nInsanity Level: {insanityLvl:F0}/{maxInsanityLevel:F0}" });
+                int profitQuota = TimeOfDay.Instance.profitQuota;
+                int quotaFulfilled = TimeOfDay.Instance.quotaFulfilled;
+                int daysUntilDeadline = TimeOfDay.Instance.daysUntilDeadline;
 
-            //__instance.DisplayTip("Player Information", $"HP: {health:F0}/100\nINS: {insanityLvl:F0}/{maxInsanityLevel:F0}");
+                var DisplayGlobalNotification = AccessTools.Method(typeof(HUDManager), "DisplayGlobalNotification");
+                DisplayGlobalNotification.Invoke(__instance, new object[] { $"HP: {health:F0}%  -  Ins: {insanityLvl:F0}%\nDays Left: {daysUntilDeadline}  -  Quota: ${quotaFulfilled}/{profitQuota}" });
+
+                //__instance.DisplayTip("Player Information", $"HP: {health:F0}/100\nINS: {insanityLvl:F0}/{maxInsanityLevel:F0}");
             }
         }
     }
